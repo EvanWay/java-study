@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇小游戏</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, #333 0, #111 60%, #000 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #f5f5f5;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 24px;
+            border-radius: 16px;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .score-board {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .score-board span {
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        #gameCanvas {
+            background: #111;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+            display: block;
+        }
+
+        .footer {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .keys {
+            opacity: 0.8;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 999px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #111;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            font-weight: 600;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .overlay-message {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="title">贪吃蛇</div>
+        <div class="score-board">
+            <span>得分：<span id="score">0</span></span>
+            <span>最高分：<span id="highScore">0</span></span>
+        </div>
+    </div>
+    <div style="position: relative;">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div class="overlay">
+            <div id="message" class="overlay-message">按 空格 开始游戏</div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="keys">方向键控制移动，空格暂停/开始</div>
+        <button class="btn" id="restartBtn">重新开始</button>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const scoreEl = document.getElementById('score');
+    const highScoreEl = document.getElementById('highScore');
+    const messageEl = document.getElementById('message');
+    const restartBtn = document.getElementById('restartBtn');
+
+    const gridSize = 20;         // 每个格子的像素
+    const tileCount = canvas.width / gridSize; // 20 * 20 格
+
+    let snake;
+    let food;
+    let dx;
+    let dy;
+    let score;
+    let highScore = Number(localStorage.getItem('snakeHighScore') || 0);
+    let gameInterval = null;
+    let speed = 120; // 毫秒
+    let running = false;
+    let pendingDirection = null;
+
+    highScoreEl.textContent = highScore;
+
+    function initGame() {
+        snake = [
+            {x: 8, y: 10},
+            {x: 7, y: 10},
+            {x: 6, y: 10}
+        ];
+        dx = 1;
+        dy = 0;
+        score = 0;
+        speed = 120;
+        scoreEl.textContent = score;
+        pendingDirection = null;
+        placeFood();
+        draw();
+        showMessage('按 空格 开始游戏');
+        stopLoop();
+        running = false;
+    }
+
+    function placeFood() {
+        while (true) {
+            const x = Math.floor(Math.random() * tileCount);
+            const y = Math.floor(Math.random() * tileCount);
+            const onSnake = snake.some(seg => seg.x === x && seg.y === y);
+            if (!onSnake) {
+                food = {x, y};
+                break;
+            }
+        }
+    }
+
+    function drawGrid() {
+        ctx.fillStyle = '#0b0b0b';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = '#121212';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= tileCount; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * gridSize + 0.5, 0);
+            ctx.lineTo(i * gridSize + 0.5, canvas.height);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, i * gridSize + 0.5);
+            ctx.lineTo(canvas.width, i * gridSize + 0.5);
+            ctx.stroke();
+        }
+    }
+
+    function drawSnake() {
+        for (let i = 0; i < snake.length; i++) {
+            const seg = snake[i];
+            const isHead = i === 0;
+            const baseX = seg.x * gridSize;
+            const baseY = seg.y * gridSize;
+
+            if (isHead) {
+                const gradient = ctx.createRadialGradient(
+                    baseX + gridSize / 2,
+                    baseY + gridSize / 2,
+                    2,
+                    baseX + gridSize / 2,
+                    baseY + gridSize / 2,
+                    gridSize
+                );
+                gradient.addColorStop(0, '#bbf7d0');
+                gradient.addColorStop(1, '#22c55e');
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = '#16a34a';
+            }
+
+            ctx.fillRect(baseX + 2, baseY + 2, gridSize - 4, gridSize - 4);
+
+            if (isHead) {
+                ctx.fillStyle = '#052e16';
+                const eyeSize = 3;
+                let eye1X, eye1Y, eye2X, eye2Y;
+                if (dx === 1) {
+                    eye1X = baseX + gridSize - 7;
+                    eye2X = baseX + gridSize - 7;
+                    eye1Y = baseY + 6;
+                    eye2Y = baseY + gridSize - 9;
+                } else if (dx === -1) {
+                    eye1X = baseX + 4;
+                    eye2X = baseX + 4;
+                    eye1Y = baseY + 6;
+                    eye2Y = baseY + gridSize - 9;
+                } else if (dy === 1) {
+                    eye1Y = baseY + gridSize - 7;
+                    eye2Y = baseY + gridSize - 7;
+                    eye1X = baseX + 6;
+                    eye2X = baseX + gridSize - 9;
+                } else {
+                    eye1Y = baseY + 4;
+                    eye2Y = baseY + 4;
+                    eye1X = baseX + 6;
+                    eye2X = baseX + gridSize - 9;
+                }
+                ctx.fillRect(eye1X, eye1Y, eyeSize, eyeSize);
+                ctx.fillRect(eye2X, eye2Y, eyeSize, eyeSize);
+            }
+        }
+    }
+
+    function drawFood() {
+        const baseX = food.x * gridSize;
+        const baseY = food.y * gridSize;
+
+        const gradient = ctx.createRadialGradient(
+            baseX + gridSize / 2,
+            baseY + gridSize / 2,
+            1,
+            baseX + gridSize / 2,
+            baseY + gridSize / 2,
+            gridSize / 2
+        );
+        gradient.addColorStop(0, '#fecaca');
+        gradient.addColorStop(1, '#dc2626');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(baseX + gridSize / 2, baseY + gridSize / 2, gridSize / 2 - 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#16a34a';
+        ctx.fillRect(baseX + gridSize / 2 - 1, baseY + 2, 2, 6);
+    }
+
+    function draw() {
+        drawGrid();
+        drawSnake();
+        drawFood();
+    }
+
+    function step() {
+        if (!running) return;
+
+        if (pendingDirection) {
+            const {x, y} = pendingDirection;
+            if (!(x === -dx && y === -dy)) {
+                dx = x;
+                dy = y;
+            }
+            pendingDirection = null;
+        }
+
+        const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+
+        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+            gameOver();
+            return;
+        }
+
+        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+            gameOver();
+            return;
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+            score += 10;
+            scoreEl.textContent = score;
+            if (score > highScore) {
+                highScore = score;
+                highScoreEl.textContent = highScore;
+                localStorage.setItem('snakeHighScore', String(highScore));
+            }
+
+            if (speed > 60) {
+                speed -= 5;
+                restartLoop();
+            }
+
+            placeFood();
+        } else {
+            snake.pop();
+        }
+
+        draw();
+    }
+
+    function startLoop() {
+        if (gameInterval) return;
+        gameInterval = setInterval(step, speed);
+    }
+
+    function stopLoop() {
+        if (gameInterval) {
+            clearInterval(gameInterval);
+            gameInterval = null;
+        }
+    }
+
+    function restartLoop() {
+        stopLoop();
+        startLoop();
+    }
+
+    function showMessage(text) {
+        messageEl.textContent = text;
+        messageEl.parentElement.style.display = 'flex';
+    }
+
+    function hideMessage() {
+        messageEl.parentElement.style.display = 'none';
+    }
+
+    function gameOver() {
+        running = false;
+        stopLoop();
+        showMessage('游戏结束，按 空格 重新开始');
+    }
+
+    function togglePause() {
+        if (!running) {
+            running = true;
+            hideMessage();
+            startLoop();
+        } else {
+            running = false;
+            stopLoop();
+            showMessage('已暂停，按 空格 继续');
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            if (!running && snake.length === 0) {
+                initGame();
+                running = true;
+                hideMessage();
+                startLoop();
+                return;
+            }
+            if (!running && gameInterval === null && score === 0) {
+                running = true;
+                hideMessage();
+                startLoop();
+            } else if (!running && gameInterval === null && score > 0) {
+                initGame();
+                running = true;
+                hideMessage();
+                startLoop();
+            } else {
+                togglePause();
+            }
+            return;
+        }
+
+        if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const dirMap = {
+            ArrowUp: {x: 0, y: -1},
+            ArrowDown: {x: 0, y: 1},
+            ArrowLeft: {x: -1, y: 0},
+            ArrowRight: {x: 1, y: 0}
+        };
+
+        const newDir = dirMap[e.key];
+        pendingDirection = newDir;
+    });
+
+    restartBtn.addEventListener('click', () => {
+        initGame();
+    });
+
+    snake = [];
+    initGame();
+</script>
+</body>
+</html>
