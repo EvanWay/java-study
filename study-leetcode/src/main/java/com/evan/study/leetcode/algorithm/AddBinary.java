@@ -1,6 +1,8 @@
 package com.evan.study.leetcode.algorithm;
 
 /**
+ * 67.二进制求和
+ *
  * 给你两个二进制字符串 a 和 b ，以二进制字符串的形式返回它们的和。
  * <p>
  * 示例 1：
@@ -37,7 +39,7 @@ public class AddBinary {
             //得到进位
             carry = carry / 2;
         }
-        return ans.toString();
+        return ans.reverse().toString();
     }
 
     public static void main(String[] args) {
