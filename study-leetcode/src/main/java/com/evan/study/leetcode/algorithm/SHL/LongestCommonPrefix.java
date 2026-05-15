@@ -3,6 +3,10 @@ package com.evan.study.leetcode.algorithm.SHL;
 import java.util.*;
 
 /**
+ * 题目:
+ * There are N people living in a state. In this state, people concatenate their town name before their first name. Write an algorithm to find the name of the town of the given N people where the name of the town is the common substring and has the maximum length.
+ * 一个州有N个人。在这个州，人们在名字之前连接他们的城镇名称。编写一个算法来找到给定N个人的城镇名称，其中城镇名称是公共子字符串，长度最大。
+ *
  * Input:
  * 3
  * bangaloreRam
