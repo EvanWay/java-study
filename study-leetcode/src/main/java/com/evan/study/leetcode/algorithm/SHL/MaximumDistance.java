@@ -3,6 +3,17 @@ package com.evan.study.leetcode.algorithm.SHL;
 import java.util.*;
 
 /**
+ * 题目:
+ * In a city there are N houses. Noddy is looking for a plot of land in the city on which to build his house. He wants to buy the largest plot of land that will allow him to build the largest possible house.
+ * All the houses in the city lie in a straight line and all of them have a house number and a second number indicating the position of the house from the entry point in the city.
+ * Noddy wants to find the houses between which he can build the largest possible house.
+ * Write an algorithm to help Noddy find the house numbers between which he can build the largest possible house.
+ *
+ * 在一个城市里有 N 栋房子。Noddy 正在城市中寻找一块土地来建造他的房子。他想购买最大的一块土地，这块土地可以让他建造尽可能大的房子。
+ * 所有房子都位于一条直线上，并且每栋房子都有一个房屋编号，以及第二个数字，用来表示该房子距离城市入口点的位置。
+ * Noddy 想找到两栋房子，在这两栋房子之间他可以建造最大的房子。
+ * 请写一个算法，帮助 Noddy 找到这两栋房子的房屋编号。
+ *
  * 两个房子最大距离
  * 思路：按房子位置 Pi 排序，然后找相邻房子之间位置差最大的那一对。
  * <p>
