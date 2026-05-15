@@ -19,11 +19,11 @@ import java.util.*;
  * <p>
  * Input:
  * 3 2
- * 1 4
- * 3 9
- * 2 5
+ * 11 4
+ * 13 9
+ * 12 5
  * Output:
- * 2 3
+ * 12 13
  */
 public class MaximumDistance {
     public static void main(String[] args) {
