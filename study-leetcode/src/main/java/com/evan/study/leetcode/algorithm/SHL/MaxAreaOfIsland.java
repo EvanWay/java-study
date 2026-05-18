@@ -4,16 +4,26 @@ import java.util.Scanner;
 
 /**
  * 岛屿的最大面积
+ * The city authorities conduct a study of the houses in a residential area for a city planning scheme.
+ * The area is depicted in an aerial view and divided into an N x M grid.
+ * If a grid cell contains some part of a house roof, then it is assigned the value 1; otherwise, the cell represents a vacant plot and is assigned the value 0.
+ * Clusters of adjacent grid cells with value 1 represent a single house.
+ * Diagonally placed grids with value 1 do not represent a single house.
+ * The area of a house is the number of 1s that it spans.
+ *
+ * Write an algorithm to find the area of the largest house.
+ *
  * 这道题就是LeetCode No.695 岛屿的最大面积 Max Area of Island
  *
  * Input:
- * 4 5
- * 1 1 0 0 0
- * 1 1 0 0 0
+ * 5 5
+ * 0 0 0 0 0
+ * 0 1 1 0 0
+ * 0 0 0 0 0
+ * 0 0 1 1 0
  * 0 0 1 0 0
- * 0 0 0 1 1
  * Output:
- * 4
+ * 3
  */
 public class MaxAreaOfIsland {
     public static void main(String[] args) {
