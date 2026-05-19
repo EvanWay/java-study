@@ -9,7 +9,7 @@ import java.util.*;
  * 给你一个整数列表和一个整数 K。
  * 写一个算法，找出列表中严格小于 K 的元素个数。
  *
- * 很简单的题 Array Traversal（数组遍历统计）
+ * 很简单的题 Array Traversal（数组遍历统计）遍历计数
  *
  * Input:
  * 7
