@@ -18,6 +18,13 @@ import java.util.Scanner;
  * Print an integer representing the number of occurrences of Sub in Parent.
  * If no occurrence of Sub is found in Parent then print 0.
  *
+ * Input:
+ * TimisplayinginthehouseofTimwiththetoysofTim
+ * Tim
+ *
+ * Output:
+ * 3
+ *
  * 这道题类似于LeetCode No.28 implement strStr()
  */
 public class CountSubStrInParentStr {
