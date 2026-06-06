@@ -1,0 +1,41 @@
+{
+  "skill_name": "clm-sql-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "生成CLM的sql，UETR是 1234567890ABCDEF",
+      "expected_output": "SQL with uetr = '1234567890ABCDEF'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "生成sql，uetr是 ABC123XYZ",
+      "expected_output": "SQL with uetr = 'ABC123XYZ'",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "生成CLM的sql，transaction_id是 TX_98765",
+      "expected_output": "SQL with transaction_id = 'TX_98765'",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "生成CLM的sql，UETR是 7f3e9a2c, 4b5d4e8a, 9c1d2f3a",
+      "expected_output": "SQL with uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a')",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "生成sql，transaction_id是 TX001;TX002;TX003",
+      "expected_output": "SQL with transaction_id IN ('TX001', 'TX002', 'TX003')",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "生成CLM的sql uetr 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9d 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9a 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9b",
+      "expected_output": "SQL with uetr IN ('7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9d', '7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9a', '7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9b')",
+      "files": []
+    }
+  ]
+}
