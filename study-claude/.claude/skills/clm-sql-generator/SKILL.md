@@ -26,7 +26,9 @@ Use this skill when the user:
 
 ## Output Format
 
-Always display results in code blocks for easy copying (and auto-copy to clipboard when available):
+Always display results in code blocks for easy copying:
+
+<!-- (auto-copy to clipboard disabled) -->
 
 ```sql
 -- CLM_PAYMENT
@@ -56,14 +58,14 @@ select * from CLM_PAYMENT where uetr = 'xxx';
      select * from CLM_PAYMENT where <field> IN ('<value1>', '<value2>', '<value3>');
      ```
 
-4. **Copy to clipboard**: Execute the copy command to copy SQL to clipboard:
+<!-- 4. **Copy to clipboard**: (DISABLED) Execute the copy command to copy SQL to clipboard:
    ```bash
    echo "SELECT * FROM CLM_PAYMENT WHERE <field> <operator> '<values>';" | pbcopy  # macOS
    # OR
    echo "SELECT * FROM CLM_PAYMENT WHERE <field> <operator> '<values>';" | clip   # Windows
-   ```
+   ``` -->
 
-5. **Display the output** in code block format for easy copying
+4. **Display the output** in code block format for easy copying
 
 ## Examples
 
@@ -139,4 +141,4 @@ where uetr IN ('7c9e6679-7425-40de-944b-e07fc1f90ae7',
 - For multiple values, use IN clause with comma-separated quoted values
 - Supported separators: comma, space, semicolon, pipe, or newline
 - **Code block output**: Always displayed in code blocks for easy copying in any environment
-- **Auto-copy**: In environments that support clipboard access (like Claude Code), SQL is also automatically copied to clipboard
+<!-- - **Auto-copy**: In environments that support clipboard access (like Claude Code), SQL is also automatically copied to clipboard (DISABLED) -->
