@@ -1,18 +1,18 @@
 ---
 name: clm-sql-generator
-description: Generate SQL queries for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, and process_state tables based on UETR or transaction_id. Use this skill whenever the user asks to generate SQL for CLM tables, mentions UETR, needs to query CLM_PAYMENT/PAYMENT_MESSAGE_STATE/transaction_state/process_state, or wants to generate a where clause for CLM data lookup.
+description: Generate SQL queries for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, and process_state tables based on UETR or transaction_id. Use this skill whenever the user asks to generate SQL for CLM tables, mentions UETR, needs to query CLM_PAYMENT/PAYMENT_MESSAGE_STATE/transaction_state/payload/process_state, or wants to generate a where clause for CLM data lookup.
 ---
 
 # CLM SQL Generator
 
-Generate SQL queries for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, and process_state tables based on provided identifiers.
+Generate SQL queries for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, and process_state tables based on provided identifiers.
 
 ## When to Use
 
 Use this skill when the user:
 - Asks to generate SQL for CLM tables
 - Mentions UETR or transaction_id in the context of CLM
-- Asks to query CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, or process_state table
+- Asks to query CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, or process_state table
 - Needs to generate WHERE clauses for CLM data lookup
 
 ## Supported Tables
@@ -20,6 +20,7 @@ Use this skill when the user:
 - **CLM_PAYMENT** - CLM Payment table (supports uetr, transaction_id)
 - **PAYMENT_MESSAGE_STATE** - Payment Message State table (with ORDER BY, supports uetr, transaction_id)
 - **transaction_state** - Transaction State table (mini contract, with ORDER BY, supports uetr, transaction_id)
+- **payload** - Payload table (main contract, supports uetr, transaction_id)
 - **process_state** - Process State table (which service is failing, ONLY supports transaction_id)
 
 ## Supported Fields
@@ -49,6 +50,9 @@ order by transaction_id, timestamp asc;
 select * from transaction_state
 where uetr = 'xxx'
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload where uetr = 'xxx';
 ```
 
 **For transaction_id:**
@@ -67,6 +71,9 @@ order by transaction_id, timestamp asc;
 select * from transaction_state
 where transaction_id = 'xxx'
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload where transaction_id = 'xxx';
 
 -- process_state (which service is failing)
 select transaction_id,
@@ -129,6 +136,16 @@ order by transaction_id, timestamp;
      order by timestamp desc;
      ```
 
+   **payload** (no ORDER BY):
+   - Single value:
+     ```sql
+     select * from payload where <field> = '<value>';
+     ```
+   - Multiple values:
+     ```sql
+     select * from payload where <field> IN ('<value1>', '<value2>', '<value3>');
+     ```
+
    **process_state** (ONLY supports transaction_id, always with ORDER BY):
    - Single value:
      ```sql
@@ -177,6 +194,9 @@ order by transaction_id, timestamp asc;
 select * from transaction_state
 where uetr = '1234567890ABCDEF'
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload where uetr = '1234567890ABCDEF';
 ```
 
 **Example 1b: Single transaction ID (with process_state)**
@@ -198,6 +218,9 @@ order by transaction_id, timestamp asc;
 select * from transaction_state
 where transaction_id = 'TX_12345'
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload where transaction_id = 'TX_12345';
 
 -- process_state (which service is failing)
 select transaction_id,
@@ -229,6 +252,10 @@ order by transaction_id, timestamp asc;
 select * from transaction_state
 where uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a')
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload
+where uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a');
 ```
 
 **Example 3: Multiple transaction IDs (semicolon separator)**
@@ -251,6 +278,10 @@ order by transaction_id, timestamp asc;
 select * from transaction_state
 where transaction_id IN ('TX001', 'TX002', 'TX003')
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload
+where transaction_id IN ('TX001', 'TX002', 'TX003');
 
 -- process_state (which service is failing)
 select transaction_id,
@@ -291,6 +322,12 @@ where uetr IN ('7c9e6679-7425-40de-944b-e07fc1f90ae7',
               '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
               '4e1c8c9e-6a3f-4b2a-9d5f-8e7a2c3b5d1f')
 order by timestamp desc;
+
+-- payload (main contract)
+select * from payload
+where uetr IN ('7c9e6679-7425-40de-944b-e07fc1f90ae7',
+              '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+              '4e1c8c9e-6a3f-4b2a-9d5f-8e7a2c3b5d1f');
 ```
 
 ## Notes
@@ -302,10 +339,11 @@ order by timestamp desc;
 - Supported separators: comma, space, semicolon, pipe, or newline
 - **PAYMENT_MESSAGE_STATE** always includes `ORDER BY transaction_id, timestamp asc`
 - **transaction_state** always includes `ORDER BY timestamp desc`
+- **payload** supports both uetr and transaction_id, no ORDER BY
 - **process_state** ONLY supports `transaction_id` field (NOT uetr), always includes `ORDER BY transaction_id, timestamp`
 - **Code block output**: Always displayed in code blocks for easy copying in any environment
 - **Output tables**:
-  - `uetr`: CLM_PAYMENT + PAYMENT_MESSAGE_STATE + transaction_state (3 tables)
-  - `transaction_id`: All 4 tables (including process_state)
+  - `uetr`: CLM_PAYMENT + PAYMENT_MESSAGE_STATE + transaction_state + payload (4 tables)
+  - `transaction_id`: All 5 tables (including process_state)
 - **Conditions header**: Single `-- Conditions:` comment at top, shared by all queries
 <!-- - **Auto-copy**: In environments that support clipboard access (like Claude Code), SQL is also automatically copied to clipboard (DISABLED) -->
