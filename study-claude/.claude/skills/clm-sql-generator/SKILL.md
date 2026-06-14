@@ -76,10 +76,8 @@ order by timestamp desc;
 select * from payload where transaction_id = 'xxx';
 
 -- process_state (which service is failing)
-select transaction_id,
-       to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
-       regexp_substr(a.sequence, '[^,]+', 1, step+1) service,
-       a.state, a.step, a.outcome, a.message
+select transaction_id,to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
+       regexp_substr(a.sequence, '[^,]+', 1, step+1) service, a.state, a.step, a.outcome, a.message
 from process_state a
 where transaction_id = 'xxx'
 order by transaction_id, timestamp;
@@ -149,20 +147,16 @@ order by transaction_id, timestamp;
    **process_state** (ONLY supports transaction_id, always with ORDER BY):
    - Single value:
      ```sql
-     select transaction_id,
-            to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
-            regexp_substr(a.sequence, '[^,]+', 1, step+1) service,
-            a.state, a.step, a.outcome, a.message
+     select transaction_id,to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
+            regexp_substr(a.sequence, '[^,]+', 1, step+1) service, a.state, a.step, a.outcome, a.message
      from process_state a
      where transaction_id = '<value>'
      order by transaction_id, timestamp;
      ```
    - Multiple values:
      ```sql
-     select transaction_id,
-            to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
-            regexp_substr(a.sequence, '[^,]+', 1, step+1) service,
-            a.state, a.step, a.outcome, a.message
+     select transaction_id,to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
+            regexp_substr(a.sequence, '[^,]+', 1, step+1) service, a.state, a.step, a.outcome, a.message
      from process_state a
      where transaction_id IN ('<value1>', '<value2>', '<value3>')
      order by transaction_id, timestamp;
@@ -284,10 +278,8 @@ select * from payload
 where transaction_id IN ('TX001', 'TX002', 'TX003');
 
 -- process_state (which service is failing)
-select transaction_id,
-       to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
-       regexp_substr(a.sequence, '[^,]+', 1, step+1) service,
-       a.state, a.step, a.outcome, a.message
+select transaction_id,to_char(a.timestamp, 'YYYY-MM-DD hh24:mi:ss.ff3') datetime,
+       regexp_substr(a.sequence, '[^,]+', 1, step+1) service, a.state, a.step, a.outcome, a.message
 from process_state a
 where transaction_id IN ('TX001', 'TX002', 'TX003')
 order by transaction_id, timestamp;
