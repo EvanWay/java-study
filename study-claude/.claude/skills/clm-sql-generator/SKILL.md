@@ -1,11 +1,11 @@
 ---
 name: clm-sql-generator
-description: Generate SQL queries for CLM_PAYMENT and PAYMENT_MESSAGE_STATE tables based on UETR or transaction_id. Use this skill whenever the user asks to generate SQL for CLM tables, mentions UETR, needs to query CLM_PAYMENT/PAYMENT_MESSAGE_STATE, or wants to generate a where clause for CLM data lookup.
+description: Generate SQL queries for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, and transaction_state tables based on UETR or transaction_id. Use this skill whenever the user asks to generate SQL for CLM tables, mentions UETR, needs to query CLM_PAYMENT/PAYMENT_MESSAGE_STATE/transaction_state, or wants to generate a where clause for CLM data lookup.
 ---
 
 # CLM SQL Generator
 
-Generate SQL queries for CLM_PAYMENT and PAYMENT_MESSAGE_STATE tables based on provided identifiers.
+Generate SQL queries for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, and transaction_state tables based on provided identifiers.
 
 ## When to Use
 
@@ -19,6 +19,7 @@ Use this skill when the user:
 
 - **CLM_PAYMENT** - CLM Payment table
 - **PAYMENT_MESSAGE_STATE** - Payment Message State table (with ORDER BY)
+- **transaction_state** - Transaction State table (mini contract, with ORDER BY)
 
 ## Supported Fields
 
@@ -41,6 +42,11 @@ select * from CLM_PAYMENT where uetr = 'xxx';
 select * from PAYMENT_MESSAGE_STATE
 where uetr = 'xxx'
 order by transaction_id, timestamp asc;
+
+-- transaction_state (mini contract)
+select * from transaction_state
+where uetr = 'xxx'
+order by timestamp desc;
 ```
 
 ## How to Generate SQL
@@ -54,7 +60,7 @@ order by transaction_id, timestamp asc;
    - Multiple values: `xxx, yyy, zzz` → use `IN ('xxx', 'yyy', 'zzz')`
    - Supported separators: comma (,), space, semicolon (;), pipe (|), or newline
 
-3. **Construct the SQL** for BOTH tables:
+3. **Construct the SQL** for ALL tables:
 
    **CLM_PAYMENT:**
    - Single value:
@@ -80,9 +86,23 @@ order by transaction_id, timestamp asc;
      order by transaction_id, timestamp asc;
      ```
 
+   **transaction_state** (always with ORDER BY):
+   - Single value:
+     ```sql
+     select * from transaction_state
+     where <field> = '<value>'
+     order by timestamp desc;
+     ```
+   - Multiple values:
+     ```sql
+     select * from transaction_state
+     where <field> IN ('<value1>', '<value2>', '<value3>')
+     order by timestamp desc;
+     ```
+
 4. **Display the output** in code block format with:
    - Single `-- Conditions:` comment at the top
-   - Followed by SQL for both tables
+   - Followed by SQL for all three tables
 
 ## Examples
 
@@ -100,6 +120,11 @@ select * from CLM_PAYMENT where uetr = '1234567890ABCDEF';
 select * from PAYMENT_MESSAGE_STATE
 where uetr = '1234567890ABCDEF'
 order by transaction_id, timestamp asc;
+
+-- transaction_state (mini contract)
+select * from transaction_state
+where uetr = '1234567890ABCDEF'
+order by timestamp desc;
 ```
 
 **Example 2: Single transaction ID**
@@ -116,6 +141,11 @@ select * from CLM_PAYMENT where transaction_id = 'TX_12345';
 select * from PAYMENT_MESSAGE_STATE
 where transaction_id = 'TX_12345'
 order by transaction_id, timestamp asc;
+
+-- transaction_state (mini contract)
+select * from transaction_state
+where transaction_id = 'TX_12345'
+order by timestamp desc;
 ```
 
 **Example 3: Multiple UETRs (IN clause)**
@@ -133,6 +163,11 @@ where uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a');
 select * from PAYMENT_MESSAGE_STATE
 where uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a')
 order by transaction_id, timestamp asc;
+
+-- transaction_state (mini contract)
+select * from transaction_state
+where uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a')
+order by timestamp desc;
 ```
 
 **Example 4: Multiple transaction IDs (semicolon separator)**
@@ -150,6 +185,11 @@ where transaction_id IN ('TX001', 'TX002', 'TX003');
 select * from PAYMENT_MESSAGE_STATE
 where transaction_id IN ('TX001', 'TX002', 'TX003')
 order by transaction_id, timestamp asc;
+
+-- transaction_state (mini contract)
+select * from transaction_state
+where transaction_id IN ('TX001', 'TX002', 'TX003')
+order by timestamp desc;
 ```
 
 **Example 5: Multiple UETRs (newline separated)**
@@ -174,6 +214,13 @@ where uetr IN ('7c9e6679-7425-40de-944b-e07fc1f90ae7',
               '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
               '4e1c8c9e-6a3f-4b2a-9d5f-8e7a2c3b5d1f')
 order by transaction_id, timestamp asc;
+
+-- transaction_state (mini contract)
+select * from transaction_state
+where uetr IN ('7c9e6679-7425-40de-944b-e07fc1f90ae7',
+              '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+              '4e1c8c9e-6a3f-4b2a-9d5f-8e7a2c3b5d1f')
+order by timestamp desc;
 ```
 
 ## Notes
@@ -184,7 +231,8 @@ order by transaction_id, timestamp asc;
 - For multiple values, use IN clause with comma-separated quoted values
 - Supported separators: comma, space, semicolon, pipe, or newline
 - **PAYMENT_MESSAGE_STATE** always includes `ORDER BY transaction_id, timestamp asc`
+- **transaction_state** always includes `ORDER BY timestamp desc`
 - **Code block output**: Always displayed in code blocks for easy copying in any environment
-- **Output both tables**: Always generate SQL for both CLM_PAYMENT and PAYMENT_MESSAGE_STATE
-- **Conditions header**: Single `-- Conditions:` comment at top, shared by both queries
+- **Output all three tables**: Always generate SQL for CLM_PAYMENT, PAYMENT_MESSAGE_STATE, and transaction_state
+- **Conditions header**: Single `-- Conditions:` comment at top, shared by all queries
 <!-- - **Auto-copy**: In environments that support clipboard access (like Claude Code), SQL is also automatically copied to clipboard (DISABLED) -->
