@@ -3,39 +3,53 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "生成CLM的sql，UETR是 1234567890ABCDEF",
-      "expected_output": "SQL with uetr = '1234567890ABCDEF'",
-      "files": []
+      "prompt": "generate clm sql, uetr is e58ed7ek-8b70-43d1-a8eb-f07fc1f90ae7",
+      "expected_output": "field=uetr | condition='=' | values=['e58ed7ek-8b70-43d1-a8eb-f07fc1f90ae7'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
     },
     {
       "id": 2,
-      "prompt": "生成sql，uetr是 ABC123XYZ",
-      "expected_output": "SQL with uetr = 'ABC123XYZ'",
-      "files": []
+      "prompt": "generate sql for clm, uetr: b832d3a7-c91f-4e26-b1f2-8a5c7d9e0f4a",
+      "expected_output": "field=uetr | condition='=' | values=['b832d3a7-c91f-4e26-b1f2-8a5c7d9e0f4a'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
     },
     {
       "id": 3,
-      "prompt": "生成CLM的sql，transaction_id是 TX_98765",
-      "expected_output": "SQL with transaction_id = 'TX_98765'",
-      "files": []
+      "prompt": "generate clm sql, transaction_id = TX_20240625_001",
+      "expected_output": "field=transaction_id | condition='=' | values=['TX_20240625_001'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, process_state (5 tables) | process_state=INCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc), process_state(timestamp)"
     },
     {
       "id": 4,
-      "prompt": "生成CLM的sql，UETR是 7f3e9a2c, 4b5d4e8a, 9c1d2f3a",
-      "expected_output": "SQL with uetr IN ('7f3e9a2c', '4b5d4e8a', '9c1d2f3a')",
-      "files": []
+      "prompt": "generate clm sql for transaction id TX_PAYMENT_8842",
+      "expected_output": "field=transaction_id | condition='=' | values=['TX_PAYMENT_8842'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, process_state (5 tables) | process_state=INCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc), process_state(timestamp)"
     },
     {
       "id": 5,
-      "prompt": "生成sql，transaction_id是 TX001;TX002;TX003",
-      "expected_output": "SQL with transaction_id IN ('TX001', 'TX002', 'TX003')",
-      "files": []
+      "prompt": "generate clm sql, uetr values: d4e5f6a7-8b90-4c1d-9e2f-3a4b5c6d7e8f, a1b2c3d4-e5f6-7890-abcd-ef1234567890, f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+      "expected_output": "field=uetr | condition=IN | values=['d4e5f6a7-8b90-4c1d-9e2f-3a4b5c6d7e8f', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f9e8d7c6-b5a4-3210-fedc-ba9876543210'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
     },
     {
       "id": 6,
-      "prompt": "生成CLM的sql uetr 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9d 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9a 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9b",
-      "expected_output": "SQL with uetr IN ('7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9d', '7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9a', '7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9b')",
-      "files": []
+      "prompt": "give me clm sql for these transaction ids: TX_001;TX_002;TX_003",
+      "expected_output": "field=transaction_id | condition=IN | values=['TX_001', 'TX_002', 'TX_003'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, process_state (5 tables) | process_state=INCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc), process_state(timestamp)"
+    },
+    {
+      "id": 7,
+      "prompt": "generate clm sql query, uetrs are:\n4e1c8c9e-6a3f-4b2a-9d5f-8e7a2c3b5d1f\n6ba7b810-9dad-11d1-80b4-00c04fd430c8\n7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "expected_output": "field=uetr | condition=IN | values=['4e1c8c9e-6a3f-4b2a-9d5f-8e7a2c3b5d1f', '6ba7b810-9dad-11d1-80b4-00c04fd430c8', '7c9e6679-7425-40de-944b-e07fc1f90ae7'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
+    },
+    {
+      "id": 8,
+      "prompt": "clm sql, uetr: c1d2e3f4-a5b6-7890-cdef-0123456789ab | d4e5f6a7-b890-4c1d-9e2f-3a4b5c6d7e8f | feed-face-dead-beef-123456789abc",
+      "expected_output": "field=uetr | condition=IN | values=['c1d2e3f4-a5b6-7890-cdef-0123456789ab', 'd4e5f6a7-b890-4c1d-9e2f-3a4b5c6d7e8f', 'feed-face-dead-beef-123456789abc'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
+    },
+    {
+      "id": 9,
+      "prompt": "hey I need to query CLM tables, the uetr is 7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9d",
+      "expected_output": "field=uetr | condition='=' | values=['7f3e9a2c-4b5d-4e8a-9c1d-2f3a5b7e8c9d'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
+    },
+    {
+      "id": 10,
+      "prompt": "can you generate clm sql? looking for transaction ids TX-ORDER-100, TX-ORDER-200, TX-ORDER-300",
+      "expected_output": "field=transaction_id | condition=IN | values=['TX-ORDER-100', 'TX-ORDER-200', 'TX-ORDER-300'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, process_state (5 tables) | process_state=INCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc), process_state(timestamp)"
     }
   ]
 }
