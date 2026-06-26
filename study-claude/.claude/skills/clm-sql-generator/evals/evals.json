@@ -50,6 +50,11 @@
       "id": 10,
       "prompt": "can you generate clm sql? looking for transaction ids TX-ORDER-100, TX-ORDER-200, TX-ORDER-300",
       "expected_output": "field=transaction_id | condition=IN | values=['TX-ORDER-100', 'TX-ORDER-200', 'TX-ORDER-300'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload, process_state (5 tables) | process_state=INCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc), process_state(timestamp)"
+    },
+    {
+      "id": 11,
+      "prompt": "generate clm sql for these uetrs: b4c5d6e7-f8a9-40b1-c2d3-e4f5a6b7c8d9 a1b2c3d4-e5f6-7890-abcd-ef1234567890 f9e8d7c6-b5a4-3210-fedc-ba9876543210",
+      "expected_output": "field=uetr | condition=IN | values=['b4c5d6e7-f8a9-40b1-c2d3-e4f5a6b7c8d9', 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'f9e8d7c6-b5a4-3210-fedc-ba9876543210'] | tables: CLM_PAYMENT, PAYMENT_MESSAGE_STATE, transaction_state, payload (4 tables) | process_state=EXCLUDED | ORDER BY: PAYMENT_MESSAGE_STATE(timestamp asc), transaction_state(timestamp desc)"
     }
   ]
 }
